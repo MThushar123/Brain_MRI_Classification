@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain MRI Classifier</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ── HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="9" stroke="#2563eb" stroke-width="1.8"/>
+          <path d="M6 11 Q8.5 6 11 11 Q13.5 16 16 11" stroke="#2563eb" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="1.8" fill="#2563eb"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">NeuroScan</div>
+        <div class="brand-sub">Brain MRI Classification</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-pill" id="statusPill">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+      <!-- Tab switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn active" id="tabScan" onclick="switchTab('scan')">Scan</button>
+        <button class="tab-btn" id="tabHistory" onclick="switchTab('history')">History</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── SCAN TAB  -->
+  <main class="main-content" id="pageScan">
+    <div class="scan-grid">
+
+      <!-- LEFT: Patient Details + Upload -->
+      <div class="left-col">
+
+        <!-- Patient Details Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h2 class="card-title">Patient Details</h2>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="required">*</span></label>
+              <input class="form-input" id="patientName" type="text" placeholder="e.g. Ravi Kumar" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age <span class="required">*</span></label>
+              <input class="form-input" id="patientAge" type="number" placeholder="e.g. 35" min="1" max="120"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender <span class="required">*</span></label>
+              <select class="form-input" id="patientGender">
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Patient ID</label>
+              <input class="form-input" id="patientId" type="text" placeholder="e.g. PT-2024-001"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date of Scan</label>
+              <input class="form-input" id="scanDate" type="date"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Referring Doctor</label>
+              <input class="form-input" id="refDoctor" type="text" placeholder="e.g. Dr. Anitha"/>
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label">Symptoms / Clinical Notes</label>
+              <textarea class="form-input form-textarea" id="symptoms" placeholder="e.g. Frequent headaches, vision blurring, dizziness..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">MRI Scan Type</label>
+              <select class="form-input" id="scanType">
+                <option value="">Select type</option>
+                <option>T1-weighted</option>
+                <option>T2-weighted</option>
+                <option>FLAIR</option>
+                <option>DWI</option>
+                <option>Contrast-enhanced</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Priority</label>
+              <select class="form-input" id="priority">
+                <option value="Routine">Routine</option>
+                <option value="Urgent">Urgent</option>
+                <option value="Emergency">Emergency</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🧠</span>
+            <h2 class="card-title">MRI Scan Image</h2>
+          </div>
+
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <div class="upload-inner" id="uploadInner">
+              <div class="upload-svg">
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <rect x="6" y="14" width="24" height="17" rx="3" stroke="#94a3b8" stroke-width="1.5"/>
+                  <path d="M18 4 L18 20 M12 10 L18 4 L24 10" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <p class="upload-label">Drop MRI image or <span class="upload-link">browse</span></p>
+              <p class="upload-formats">JPG · PNG · BMP · TIFF</p>
+            </div>
+            <img id="previewImg" class="preview-img hidden" alt="Preview"/>
+          </div>
+
+          <div class="file-row hidden" id="fileInfo">
+            <span class="file-name" id="fileName"></span>
+            <button class="clear-btn" id="clearBtn">Remove</button>
+          </div>
+
+          <button class="analyze-btn" id="analyzeBtn" disabled>
+            Analyze Scan
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="right-col">
+        <div class="card result-card">
+          <div class="card-header">
+            <span class="card-icon">📊</span>
+            <h2 class="card-title">Diagnosis Result</h2>
+          </div>
+
+          <!-- Idle -->
+          <div class="state-idle" id="stateIdle">
+            <div class="idle-illustration">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" stroke="#e2e8f0" stroke-width="2"/>
+                <circle cx="32" cy="32" r="18" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <circle cx="32" cy="32" r="5" fill="#e2e8f0"/>
+              </svg>
+            </div>
+            <p class="idle-title">No scan analyzed yet</p>
+            <p class="idle-sub">Fill patient details, upload an MRI image, and click Analyze</p>
+          </div>
+
+          <!-- Loading -->
+          <div class="state-loading hidden" id="stateLoading">
+            <div class="spinner"></div>
+            <p class="loading-title">Analyzing scan...</p>
+            <p class="loading-step" id="loadingStep">Preprocessing image</p>
+          </div>
+
+          <!-- Output -->
+          <div class="state-output hidden" id="stateOutput">
+
+            <div class="diagnosis-box" id="diagnosisBox">
+              <div class="diag-top">
+                <div>
+                  <div class="diag-label">Predicted Diagnosis</div>
+                  <div class="diag-name" id="diagName">—</div>
+                </div>
+                <div class="conf-circle" id="confCircle">0%</div>
+              </div>
+              <div class="diag-desc" id="diagDesc"></div>
+            </div>
+
+            <div class="prob-section">
+              <div class="prob-title">Class Probabilities</div>
+              <div id="probBars"></div>
+            </div>
+
+            <div class="result-info-grid" id="resultInfoGrid"></div>
+
+            <div class="action-row">
+              <button class="save-btn" id="saveBtn">💾 Save to History</button>
+              <button class="new-btn" id="newBtn">New Scan</button>
+            </div>
+          </div>
+
+          <!-- Error -->
+          <div class="state-error hidden" id="stateError">
+            <div class="error-icon">⚠️</div>
+            <p class="error-title">Analysis Failed</p>
+            <p class="error-msg" id="errorMsg"></p>
+            <button class="retry-btn" id="retryBtn">Try Again</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── HISTORY TAB  -->
+  <main class="main-content hidden" id="pageHistory">
+    <div class="history-page">
+      <div class="history-topbar">
+        <div>
+          <h2 class="history-heading">Patient History</h2>
+          <p class="history-sub" id="historyCount">0 records saved</p>
+        </div>
+        <div class="history-actions">
+          <input class="search-input" id="searchInput" type="text" placeholder="Search by name or ID..."/>
+          <button class="export-btn" id="exportBtn">⬇ Export CSV</button>
+          <button class="clear-history-btn" id="clearHistoryBtn">🗑 Clear All</button>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="history-empty" id="historyEmpty">
+        <div class="empty-icon">📋</div>
+        <p class="empty-title">No records yet</p>
+        <p class="empty-sub">Analyzed scans will appear here after saving</p>
+      </div>
+
+      <!-- Records list -->
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </main>
+
+  <!-- ── RECORD DETAIL MODAL  -->
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal" id="modalBox">
+      <div class="modal-header">
+        <h3 class="modal-title">Patient Record</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="modal-delete-btn" id="modalDeleteBtn">Delete Record</button>
+        <button class="modal-ok-btn" id="modalOkBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
