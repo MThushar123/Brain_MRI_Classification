@@ -4,20 +4,19 @@
              Export CSV, Modal detail view, Delete
  */
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = ""; // IMPORTANT: use same domain (Render deployment)
 
-// ── Class config 
+// ── Class config
 const CLASS_CONFIG = {
-  glioma:     { color: "#dc2626", bg: "#fef2f2", bar: "#ef4444",
-                desc: "Glioma is a tumor that originates in the glial cells of the brain. It requires immediate specialist review." },
-  meningioma: { color: "#ea580c", bg: "#fff7ed", bar: "#f97316",
-                desc: "Meningioma arises from the meninges. Most are benign but location determines treatment urgency." },
-  notumor:    { color: "#16a34a", bg: "#f0fdf4", bar: "#22c55e",
-                desc: "No tumor detected in this scan. Recommend clinical correlation with patient symptoms." },
-  pituitary:  { color: "#2563eb", bg: "#eff6ff", bar: "#3b82f6",
-                desc: "Pituitary tumor affects the pituitary gland. Endocrinology consultation is recommended." },
+glioma: { color: "#dc2626", bg: "#fef2f2", bar: "#ef4444",
+desc: "Glioma is a tumor that originates in the glial cells of the brain." },
+meningioma: { color: "#ea580c", bg: "#fff7ed", bar: "#f97316",
+desc: "Meningioma arises from the meninges." },
+notumor: { color: "#16a34a", bg: "#f0fdf4", bar: "#22c55e",
+desc: "No tumor detected in this scan." },
+pituitary: { color: "#2563eb", bg: "#eff6ff", bar: "#3b82f6",
+desc: "Pituitary tumor affects the pituitary gland." },
 };
-
 // ── DOM refs 
 const uploadZone    = document.getElementById("uploadZone");
 const fileInput     = document.getElementById("fileInput");
